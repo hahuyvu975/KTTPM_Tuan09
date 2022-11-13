@@ -1,0 +1,5 @@
+package com.example.redisdemo;
+
+public class AccesssCountEntity {
+
+}

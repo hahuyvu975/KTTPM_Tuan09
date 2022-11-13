@@ -1,0 +1,42 @@
+package com.example.redisdemo;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class AccessCountController {
+	
+	private final AccessCountRepo accessCountRepo;
+
+	public AccessCountController(AccessCountRepo accessCountRepo) {
+		super();
+		this.accessCountRepo = accessCountRepo;
+	}
+	@GetMapping(value = "accesscount")
+	public List<AccessCountEntity> getAccessCountList() {
+		List<AccessCountEntity> accessCountEntities= (List<AccessCountEntity>) accessCountRepo.findAll();
+		
+		return accessCountEntities;
+	}
+	
+	@PutMapping(value ="/{location}")
+	public void updateAccessCountItem(@PathVariable("location") String location) {
+		AccessCountEntity accessCountEntity = getAccessCountEntity(location);
+		if(accessCountEntity == null) {
+			accessCountEntity = new AccessCountEntity(location);
+		}
+		accessCountEntity.setAccessCount(accessCountEntity.accessCount+1);
+		accessCountRepo.save(accessCountEntity);
+	}
+	
+	private AccessCountEntity getAccessCountEntity(String locaiton) {
+		return Optional.ofNullable(accessCountRepo.findById(locaiton)).get().orElse(null);
+	}
+	
+	
+}
